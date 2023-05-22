@@ -9,13 +9,11 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float RotationSpeed = 200;
     [SerializeField] private GameObject explosionBiere = default;
     [SerializeField] private GameObject explosionBiereSol = default;
-    [SerializeField] private AudioClip _biereExplode = default;
-
 
 
     [SerializeField] private Vector3 LaunchOffset;
     [SerializeField] private bool Thrown;
-    private float Damage = 1.5f;
+    private float Damage = 1;
     private float SplashRange = 1;
 
     private Vector3 launchDirection; // Nouvelle variable pour stocker la direction du lancer
@@ -85,13 +83,12 @@ public class Projectile : MonoBehaviour
             Vector2 positionExplosionSol = new Vector2(transform.position.x, transform.position.y + 0.5f);
             if (collision.collider.CompareTag("Ground"))
             {
-                AudioSource.PlayClipAtPoint(_biereExplode, Camera.main.transform.position,0.1f);
                 Instantiate(explosionBiereSol, positionExplosionSol, Quaternion.identity);
             }
             else
             {
-                AudioSource.PlayClipAtPoint(_biereExplode, Camera.main.transform.position,0.1f);
                 Instantiate(explosionBiere, transform.position, Quaternion.identity);
+                
             }
         
         }

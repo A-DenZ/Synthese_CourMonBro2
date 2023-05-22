@@ -154,7 +154,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 4
 --- !u!114 &3456512746917608261
 MonoBehaviour:
@@ -168,10 +168,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 340ea56f45ad6af4d862f3864c666704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HitPoints: 1
+  HitPoints: 0
   MaxHitPoints: 2
-  _points: 100
-  wokeSpeed: 3
+  wokeSpeed: 7
   HealthBar: {fileID: 3456512747187920879}
 --- !u!1 &3456512747187920877
 GameObject:
