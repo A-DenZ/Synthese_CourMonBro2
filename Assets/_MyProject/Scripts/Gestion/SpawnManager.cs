@@ -9,10 +9,14 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private GameObject _wokesPrefabs = default;
     [SerializeField] private GameObject _TrashPrefabs = default;
 
+    private GestionMusiqueFond _musiqueFond;
+
+
     private bool _stopSpawn = false;
     void Start()
     {
         StartSpawning();
+        _musiqueFond = FindObjectOfType<GestionMusiqueFond>();
     }
 
     private void StartSpawning()
@@ -23,7 +27,7 @@ public class SpawnManager : MonoBehaviour
     }
     void Update()
     {
-        
+     
     }
 
 
@@ -64,6 +68,7 @@ public class SpawnManager : MonoBehaviour
 
     public void playerDead()
     {
+        _musiqueFond.MusiqueOff();
         _stopSpawn = true;
     }
 }
