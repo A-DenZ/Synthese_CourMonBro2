@@ -1,79 +1,111 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
 
-    [SerializeField] private TextMeshProUGUI _txtEscapeCine = default;
-    [SerializeField] private GameObject _instructionsMenu = default;
 
-    private bool isInstructionsOpen = false ;
+    [SerializeField] private TextMeshProUGUI _txtScore = default;
+    [SerializeField] private Image _livesDisplayImage = default;
+    [SerializeField] private Sprite[] _liveSprites = default;
+    [SerializeField] private GameObject _pausePanel = default;
 
-    private GestionScene _gestionScene ; 
-    // Start is called before the first frame update
-    void Start()
+    //[SerializeField] private int _pointageAugmentation = 500;
+
+    private int _score = 0;
+    private bool _pauseOn = false;
+
+    private void Start()
     {
-        int indexScene = SceneManager.GetActiveScene().buildIndex;
-        _gestionScene = FindObjectOfType<GestionScene>().GetComponent<GestionScene>();
-        if (indexScene == 0) {
-        TxtEscapeCineSequence();
-        StartCoroutine(SkipAfterCineCoroutine());
-        }
-
+        _score = 0;
+        _pauseOn = false;
+        Time.timeScale = 1;
+        ChangeLivesDisplayImage(4);
+        UpdateScore();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if ((Input.GetKeyDown(KeyCode.Escape)))
+
+        // Permet la gestion du panneau de pause (marche/arrêt)
+        if ((Input.GetKeyDown(KeyCode.Escape) && !_pauseOn))
         {
-            _gestionScene.ChangerScene();
+            _pausePanel.SetActive(true);
+            Time.timeScale = 0;
+            _pauseOn = true;
         }
-
-    }
-
-    private void TxtEscapeCineSequence()
-    {
-        _txtEscapeCine.gameObject.SetActive(true);
-        StartCoroutine(TxtEscapeCineBlinkRoutine());
-    }
-
-
-    IEnumerator TxtEscapeCineBlinkRoutine()
-    {
-        while (true)
+        else if ((Input.GetKeyDown(KeyCode.Escape) && _pauseOn))
         {
-            _txtEscapeCine.gameObject.SetActive(true);
-            yield return new WaitForSeconds(1.2f);
-            _txtEscapeCine.gameObject.SetActive(false);
-            yield return new WaitForSeconds(1.2f);
+            _pausePanel.SetActive(false);
+            Time.timeScale = 1;
+            _pauseOn = false;
         }
+
     }
 
-    IEnumerator SkipAfterCineCoroutine()
+    // Méthode qui change le pointage sur le UI
+    private void UpdateScore()
     {
-        yield return new WaitForSeconds(97f);
-        _gestionScene.ChangerScene();
+        _txtScore.text = "Points : " + _score.ToString();
     }
 
-    public void OnOffInstructionsMenu()
+    // Méthodes publiques ==================================================
+
+    public int getScore()
     {
-        if (!isInstructionsOpen)
+        return _score;
+    }
+    // Méthode qui permet l'augmentation du score
+    public void AjouterScore(int points)
+    {
+        _score += points;
+        UpdateScore();
+    }
+
+    // Méthode qui permet de changer l'image des vies restantes en fonction de la vie du joueur
+    public void ChangeLivesDisplayImage(int noImage)
+    {
+        if (noImage < 0)
         {
-            _instructionsMenu.SetActive(true);
-            isInstructionsOpen = true ;
+            noImage = 0;
         }
-        else
+        _livesDisplayImage.sprite = _liveSprites[noImage];
+
+        // Si le joueur n'a plus de vie on lance la séquence de fin de partie
+        if (noImage == 0)
         {
-            _instructionsMenu.SetActive(false);
-            isInstructionsOpen = false;
+            PlayerPrefs.SetInt("Score", _score);
+            PlayerPrefs.Save();
+            StartCoroutine("FinPartie");
         }
     }
 
+    public void ChangeLivesDisplayImage2()
+    {
+        _livesDisplayImage.sprite = _liveSprites[0];
+    }
 
 
+    IEnumerator FinPartie()
+    {
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene(2);
+    }
 
+    // Méthode qui relance la partie après une pause
+    public void ResumeGame()
+    {
+        _pausePanel.SetActive(false);
+        Time.timeScale = 1;
+        _pauseOn = false;
+    }
+
+    public void ChargerDepart()
+    {
+        SceneManager.LoadScene(1);
+    }
 }
