@@ -9,13 +9,17 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private GameObject _wokesPrefabs = default;
     [SerializeField] private GameObject _TrashPrefabs = default;
 
-    private GestionMusiqueFond _musiqueFond;
 
+    private GestionMusiqueFond _musiqueFond;
+    private UIManager _uiManager;
+    private GestionScene _gestionScene;
 
     private bool _stopSpawn = false;
     void Start()
     {
         StartSpawning();
+        _uiManager = FindObjectOfType<UIManager>();
+        _gestionScene = FindObjectOfType<GestionScene>();
         _musiqueFond = FindObjectOfType<GestionMusiqueFond>();
     }
 
@@ -45,12 +49,32 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnWokesCoroutine()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
+
         while (!_stopSpawn)
         {
             Vector3 positionSpawn = new Vector3(12f, -4f);
             Instantiate(_wokesPrefabs, positionSpawn, Quaternion.identity);
-            yield return new WaitForSeconds(Random.Range(3.0f, 8.0f));
+            if(_uiManager.getScore() > 1000)
+            {
+                yield return new WaitForSeconds(Random.Range(2.0f, 6.0f));
+            }
+            else if(_uiManager.getScore() > 5000)
+            {
+                yield return new WaitForSeconds(Random.Range(1.0f, 5.0f));
+            }
+            else if(_uiManager.getScore() > 10000)
+            {
+                yield return new WaitForSeconds(Random.Range(1.0f, 3.0f));
+            }
+            else if (_uiManager.getScore() > 20000)
+            {
+                yield return new WaitForSeconds(Random.Range(0.1f, 0.2f));
+            }
+            else
+            {
+                yield return new WaitForSeconds(Random.Range(3.0f, 8.0f));
+            }
         }
     }
 
@@ -69,6 +93,7 @@ public class SpawnManager : MonoBehaviour
     public void playerDead()
     {
         _musiqueFond.MusiqueOff();
+        _gestionScene.ChangerScene();
         _stopSpawn = true;
     }
 }

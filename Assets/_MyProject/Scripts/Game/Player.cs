@@ -9,6 +9,9 @@ public class Player : MonoBehaviour
     public float jumpForce = 800;
     [SerializeField] private AudioClip _jumSound = default;
 
+    [SerializeField] private Collider2D playerCollider;
+    [SerializeField] private Collider2D legCollider;
+
     public float GroundedTolerance = 0.001f;
 
     [SerializeField] private Transform ceilingCheck;
@@ -124,6 +127,8 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.K) && Time.time > _canFire2)
         {
             _anim.SetBool("Kick", true);
+            // Active le collider de la jambe 
+            legCollider.enabled = true; 
 
             _canFire2 = Time.time + _delai;
             StartCoroutine(ResetKickAnimation());
@@ -163,6 +168,8 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(.5f); // Attendre .2 secondes
         _anim.SetBool("Kick", false);
+        // Désactive le collider de la jambe 
+        legCollider.enabled = false;
     }
 
 
