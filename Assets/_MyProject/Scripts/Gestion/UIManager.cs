@@ -8,11 +8,16 @@ using TMPro;
 public class UIManager : MonoBehaviour
 {
 
-
     [SerializeField] private TextMeshProUGUI _txtScore = default;
     [SerializeField] private Image _livesDisplayImage = default;
     [SerializeField] private Sprite[] _liveSprites = default;
     [SerializeField] private GameObject _pausePanel = default;
+    [SerializeField] private TextMeshProUGUI _txtEscapeCine = default;
+    [SerializeField] private GameObject _instructionsMenu = default;
+
+    private bool isInstructionsOpen = false;
+
+    private GestionScene _gestionScene;
 
     //[SerializeField] private int _pointageAugmentation = 500;
 
@@ -21,6 +26,13 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+        int indexScene = SceneManager.GetActiveScene().buildIndex;
+        _gestionScene = FindObjectOfType<GestionScene>().GetComponent<GestionScene>();
+        if (indexScene == 0)
+        {
+            TxtEscapeCineSequence();
+            StartCoroutine(SkipAfterCineCoroutine());
+        }
         _score = 0;
         _pauseOn = false;
         Time.timeScale = 1;
@@ -30,27 +42,42 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
+        int indexScene = SceneManager.GetActiveScene().buildIndex;
+        if (indexScene == 2)
+        {
+            // Permet la gestion du panneau de pause (marche/arrêt)
+            if ((Input.GetKeyDown(KeyCode.Escape) && !_pauseOn))
+            {
+                _pausePanel.SetActive(true);
+                Time.timeScale = 0;
+                _pauseOn = true;
+            }
+            else if ((Input.GetKeyDown(KeyCode.Escape) && _pauseOn))
+            {
+                _pausePanel.SetActive(false);
+                Time.timeScale = 1;
+                _pauseOn = false;
+            }
 
-        // Permet la gestion du panneau de pause (marche/arrêt)
-        if ((Input.GetKeyDown(KeyCode.Escape) && !_pauseOn))
-        {
-            _pausePanel.SetActive(true);
-            Time.timeScale = 0;
-            _pauseOn = true;
+
         }
-        else if ((Input.GetKeyDown(KeyCode.Escape) && _pauseOn))
+
+        if(indexScene == 0)
         {
-            _pausePanel.SetActive(false);
-            Time.timeScale = 1;
-            _pauseOn = false;
+            if ((Input.GetKeyDown(KeyCode.Escape)))
+            {
+                _gestionScene.ChangerScene();
+            }
         }
+
+
 
     }
 
     // Méthode qui change le pointage sur le UI
     private void UpdateScore()
     {
-        _txtScore.text = "Points : " + _score.ToString();
+        _txtScore.text = "Points:" + _score.ToString();
     }
 
     // Méthodes publiques ==================================================
@@ -108,4 +135,44 @@ public class UIManager : MonoBehaviour
     {
         SceneManager.LoadScene(1);
     }
+
+
+    private void TxtEscapeCineSequence()
+    {
+        _txtEscapeCine.gameObject.SetActive(true);
+        StartCoroutine(TxtEscapeCineBlinkRoutine());
+    }
+
+
+    IEnumerator TxtEscapeCineBlinkRoutine()
+    {
+        while (true)
+        {
+            _txtEscapeCine.gameObject.SetActive(true);
+            yield return new WaitForSeconds(1.2f);
+            _txtEscapeCine.gameObject.SetActive(false);
+            yield return new WaitForSeconds(1.2f);
+        }
+    }
+
+    IEnumerator SkipAfterCineCoroutine()
+    {
+        yield return new WaitForSeconds(97f);
+        _gestionScene.ChangerScene();
+    }
+
+    public void OnOffInstructionsMenu()
+    {
+        if (!isInstructionsOpen)
+        {
+            _instructionsMenu.SetActive(true);
+            isInstructionsOpen = true;
+        }
+        else
+        {
+            _instructionsMenu.SetActive(false);
+            isInstructionsOpen = false;
+        }
+    }
+
 }

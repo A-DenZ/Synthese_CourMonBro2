@@ -19,14 +19,14 @@ public class MusiqueFond : MonoBehaviour
     {
         if (!isMuted)
         {
-            _BtnMuteOFF.SetActive(true);
-            _BtnMuteON.SetActive(false);
+            _BtnMuteOFF.SetActive(false);
+            _BtnMuteON.SetActive(true);
             isMuted = true;
         }
         else
         {
-            _BtnMuteOFF.SetActive(false);
-            _BtnMuteON.SetActive(true);
+            _BtnMuteOFF.SetActive(true);
+            _BtnMuteON.SetActive(false);
             isMuted = false;
         }
     }

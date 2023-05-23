@@ -28,9 +28,8 @@ public class Enemy : MonoBehaviour
         HealthBar.SetHealth(HitPoints, MaxHitPoints);
 
         if (HitPoints <= 0)
-        {   
-            Destroy(gameObject);
-            _uiManager.AjouterScore(_points);
+        {
+            kill();
         }
     }
 
@@ -64,5 +63,12 @@ public class Enemy : MonoBehaviour
             Destroy(this.gameObject); // Détruire l'objet ennemi
         }
 
+
+    }
+
+    public void kill()
+    {
+        Destroy(gameObject);
+        _uiManager.AjouterScore(_points);
     }
 }
